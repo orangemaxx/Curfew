@@ -1,10 +1,13 @@
 package hewin.max.curfew;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,5 +49,22 @@ public final class Curfew extends JavaPlugin implements Listener {
         saveConfig();
     }
 
-    
+    public void Runnable() {
+        BukkitScheduler scheduler = getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                // Close Server
+                if (GetTime() >= config.getInt("starttime")) {
+                    for (Player target : getServer().getOnlinePlayers()) {
+                        if (!target.isOp()){
+                            target.kickPlayer(config.getString("curfewmessage"));
+                        }
+                    }
+                }
+
+                // Start countdown
+            }
+        }, 0L, 20L);
+    }
 }
