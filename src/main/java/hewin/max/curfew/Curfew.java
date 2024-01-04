@@ -46,7 +46,5 @@ public final class Curfew extends JavaPlugin implements Listener {
         saveConfig();
     }
 
-
-
     
 }
