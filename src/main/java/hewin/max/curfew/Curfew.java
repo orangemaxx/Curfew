@@ -25,6 +25,8 @@ public final class Curfew extends JavaPlugin implements Listener {
         ConfigSetup();
 
         if (config.getBoolean("enabled")) {getServer().getPluginManager().registerEvents(this, this);}
+
+        Runnable();
     }
 
     // Listeners
@@ -45,7 +47,7 @@ public final class Curfew extends JavaPlugin implements Listener {
     public void ConfigSetup() {
         config.addDefault("enabled", true);
         config.addDefault("starttime", 2130);
-        config.addDefault("endtime", 0700);
+        config.addDefault("endtime", 730);
         config.addDefault("curfewmessage", "Sorry! The Server is currently closed please join again later!");
 
         config.options().copyDefaults(true);
@@ -59,7 +61,7 @@ public final class Curfew extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 // Close Server
-                if (GetTime() >= config.getInt("starttime") && GetTime() < config.getInt("endtime")) {
+                if (GetTime() >= config.getInt("starttime")) {
                     for (Player target : getServer().getOnlinePlayers()) {
                         if (!target.isOp()){
                             target.kickPlayer(config.getString("curfewmessage"));
@@ -70,14 +72,14 @@ public final class Curfew extends JavaPlugin implements Listener {
                 // Start countdown
                 if (GetTime() == config.getInt("starttime") - 10 && !runTitle10) {
                     for (Player target : getServer().getOnlinePlayers()) {
-                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 1, 100, 1);
+                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 3, 100, 3);
                     }
                     runTitle10 = true;
                 }
 
                 if (GetTime() == config.getInt("starttime") - 5 && !runTitle5) {
                     for (Player target : getServer().getOnlinePlayers()) {
-                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 5 minutes", 1, 100, 1);
+                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 5 minutes", 3, 100, 3);
                     }
                     runTitle5 = true;
                 }
