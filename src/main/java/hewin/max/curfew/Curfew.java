@@ -1,6 +1,8 @@
 package hewin.max.curfew;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,8 @@ import java.util.Date;
 public final class Curfew extends JavaPlugin implements Listener {
 
     FileConfiguration config = getConfig();
+    Boolean runTitle10 = false;
+    Boolean runTitle5 = false;
 
     @Override
     public void onEnable() {
@@ -55,7 +59,7 @@ public final class Curfew extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 // Close Server
-                if (GetTime() >= config.getInt("starttime")) {
+                if (GetTime() >= config.getInt("starttime") && GetTime() < config.getInt("endtime")) {
                     for (Player target : getServer().getOnlinePlayers()) {
                         if (!target.isOp()){
                             target.kickPlayer(config.getString("curfewmessage"));
@@ -64,6 +68,25 @@ public final class Curfew extends JavaPlugin implements Listener {
                 }
 
                 // Start countdown
+                if (GetTime() == config.getInt("starttime") - 10 && !runTitle10) {
+                    for (Player target : getServer().getOnlinePlayers()) {
+                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 1, 100, 1);
+                    }
+                    runTitle10 = true;
+                }
+
+                if (GetTime() == config.getInt("starttime") - 5 && !runTitle5) {
+                    for (Player target : getServer().getOnlinePlayers()) {
+                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 5 minutes", 1, 100, 1);
+                    }
+                    runTitle5 = true;
+                }
+
+                if (GetTime() == config.getInt("endtime")) {
+                    runTitle10 = false;
+                    runTitle5 = false;
+                }
+
             }
         }, 0L, 20L);
     }
