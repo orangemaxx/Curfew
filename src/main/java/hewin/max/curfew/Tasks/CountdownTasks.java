@@ -1,5 +1,6 @@
 package hewin.max.curfew.Tasks;
 
+import github.scarsz.discordsrv.util.DiscordUtil;
 import hewin.max.curfew.Curfew;
 import hewin.max.curfew.Utils.Config;
 import hewin.max.curfew.Utils.Time;
@@ -18,11 +19,10 @@ public class CountdownTasks {
     Time time = new Time();
     FileConfiguration config = new Curfew().getConfig();
 
+    public BossBar bar;
     Boolean runTitle10 = false;
     Boolean runTitle5 = false;
     Boolean barexists = false;
-
-    BossBar bar;
 
     public void CountdownTasks() {
         BukkitScheduler scheduler = curfew.getServer().getScheduler();
