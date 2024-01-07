@@ -3,6 +3,9 @@ package hewin.max.curfew;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,27 +22,35 @@ public final class Curfew extends JavaPlugin implements Listener {
     FileConfiguration config = getConfig();
     Boolean runTitle10 = false;
     Boolean runTitle5 = false;
+    Boolean bossbar = false;
+    Boolean barexists = false;
+    BossBar bar;
 
     @Override
     public void onEnable() {
         ConfigSetup();
 
-        if (config.getBoolean("enabled")) {getServer().getPluginManager().registerEvents(this, this);}
+        getServer().getPluginManager().registerEvents(this, this);
 
-        Runnable();
+        CountdownTasks();
+        System.out.println("Plugin enabled! Current time is: " + GetTime());
     }
 
     // Listeners
     @EventHandler
-    public void PlayerJoin(PlayerJoinEvent e) {
-        if (GetTime() >= config.getInt("starttime") || GetTime() < config.getInt("endtime")) {
-            e.getPlayer().kickPlayer(config.getString("curfewmessage"));
+    public void PlayerJoinEvent(PlayerJoinEvent e){
+        if (GetTime() >= config.getInt("starttime") || GetTime() <= config.getInt("endtime")){
+            for (Player target : getServer().getOnlinePlayers()) {
+                if (!target.isOp()){
+                    target.kickPlayer(config.getString("curfewmessage"));
+                }
+            }
         }
     }
 
     public Integer GetTime() {
         Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         Integer time = Integer.valueOf(format.format(date).replace(":", ""));
         return time;
     }
@@ -55,17 +66,15 @@ public final class Curfew extends JavaPlugin implements Listener {
         saveConfig();
     }
 
-    public void Runnable() {
+    public void CountdownTasks() {
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 // Close Server
-                if (GetTime() >= config.getInt("starttime")) {
+                if (GetTime() == config.getInt("starttime")) {
                     for (Player target : getServer().getOnlinePlayers()) {
-                        if (!target.isOp()){
-                            target.kickPlayer(config.getString("curfewmessage"));
-                        }
+                        target.kickPlayer(config.getString("curfewmessage"));
                     }
                 }
 
@@ -75,6 +84,12 @@ public final class Curfew extends JavaPlugin implements Listener {
                         target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 3, 100, 3);
                     }
                     runTitle10 = true;
+                }
+
+                if (GetTime() >= config.getInt("starttime") - 10 && GetTime() <= config.getInt("starttime") && !barexists) {
+                    bar = Bukkit.createBossBar(ChatColor.RED + "Server Closing", BarColor.RED, BarStyle.SOLID);
+                    bar.setVisible(true);
+                    barexists = true;
                 }
 
                 if (GetTime() == config.getInt("starttime") - 5 && !runTitle5) {
@@ -87,6 +102,23 @@ public final class Curfew extends JavaPlugin implements Listener {
                 if (GetTime() == config.getInt("endtime")) {
                     runTitle10 = false;
                     runTitle5 = false;
+                }
+
+                if (barexists) {
+                    Integer timeLeft = config.getInt("starttime") - GetTime();
+                    for (Player target : getServer().getOnlinePlayers()){
+                        if (!bar.getPlayers().contains(target)){bar.addPlayer(target);}
+                        continue;
+                    }
+                    if (timeLeft > 0) {
+                        bar.setProgress(timeLeft.doubleValue() / 10D);
+                    } else if (timeLeft <= 0) {
+                        bar.removeAll();
+                        barexists = false;
+                        runTitle10 = false;
+                        runTitle5 = false;
+                    }
+
                 }
 
             }
