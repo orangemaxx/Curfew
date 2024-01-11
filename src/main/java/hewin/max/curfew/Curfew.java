@@ -37,7 +37,15 @@ public final class Curfew extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         
         CountdownTasks();
-        System.out.println("Plugin enabled! Current time is: " + GetTime());
+        getLogger().info("Plugin enabled! Current time is: " + GetTime());
+    }
+
+    @Override
+    public void onDisable() {
+        for (Player target : getServer().getOnlinePlayers()) {
+            if (bar != null && barexists){bar.removePlayer(target);}
+        }
+        bar.removeAll();
     }
 
     public void ConfigSetup() {
@@ -61,8 +69,8 @@ public final class Curfew extends JavaPlugin implements Listener {
 
 
     public void CountdownTasks() {
-        BukkitScheduler scheduler = new Curfew().getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(new Curfew(), new Runnable() {
+        BukkitScheduler scheduler = getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 // Close Server
