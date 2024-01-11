@@ -45,7 +45,7 @@ public final class Curfew extends JavaPlugin implements Listener {
         for (Player target : getServer().getOnlinePlayers()) {
             if (bar != null && barexists){bar.removePlayer(target);}
         }
-        bar.removeAll();
+        if (bar != null){bar.removeAll();}
     }
 
     public void ConfigSetup() {
