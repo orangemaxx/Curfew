@@ -46,6 +46,7 @@ public final class Curfew extends JavaPlugin implements Listener {
             if (bar != null && barexists){bar.removePlayer(target);}
         }
         if (bar != null){bar.removeAll();}
+        getLogger().info("Curfew Offline");
     }
 
     public void ConfigSetup() {
