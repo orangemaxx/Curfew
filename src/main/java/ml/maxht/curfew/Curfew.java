@@ -2,7 +2,7 @@ package ml.maxht.curfew;
 
 
 
-import ml.maxht.curfew.Commands.Time;
+import ml.maxht.curfew.Commands.TimeCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -29,6 +29,8 @@ public final class Curfew extends JavaPlugin implements Listener {
 
     public FileConfiguration config = getConfig();
 
+    TimeCommand timeCommand = new TimeCommand();
+
     @Override
     public void onEnable() {
 
@@ -36,7 +38,7 @@ public final class Curfew extends JavaPlugin implements Listener {
         Metrics metrics = new Metrics(this, bstatsId);
         ConfigSetup();
         getServer().getPluginManager().registerEvents(this, this);
-        this.getCommand("time").setExecutor(new Time());
+        this.getCommand("time").setExecutor(timeCommand);
 
         CountdownTasks();
         getLogger().info("Plugin enabled! Current time is: " + GetTime());
