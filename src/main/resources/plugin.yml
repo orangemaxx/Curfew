@@ -2,3 +2,7 @@ name: Curfew
 version: '${project.version}'
 main: ml.maxht.curfew.Curfew
 api-version: '1.20'
+commands:
+  time:
+    description: Get the current 24 hour time
+    usage: /time

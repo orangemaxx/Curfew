@@ -2,6 +2,7 @@ package ml.maxht.curfew;
 
 
 
+import ml.maxht.curfew.Commands.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -35,6 +36,7 @@ public final class Curfew extends JavaPlugin implements Listener {
         Metrics metrics = new Metrics(this, bstatsId);
         ConfigSetup();
         getServer().getPluginManager().registerEvents(this, this);
+        this.getCommand("time").setExecutor(new Time());
 
         CountdownTasks();
         getLogger().info("Plugin enabled! Current time is: " + GetTime());
@@ -51,7 +53,7 @@ public final class Curfew extends JavaPlugin implements Listener {
     }
 
     public void ConfigSetup() {
-        config.addDefault("starttime", 2130);
+        config.addDefault("starttime", 2100);
         config.addDefault("endtime", 730);
         config.addDefault("curfewmessage", "Sorry! The Server is currently closed please join again later!");
 
@@ -85,10 +87,7 @@ public final class Curfew extends JavaPlugin implements Listener {
 
                 // Start countdown
                 if (GetTime() == config.getInt("starttime") - 10 && !runTitle10) {
-                    for (Player target : getServer().getOnlinePlayers()) {
-                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 3, 100, 3);
-                        continue;
-                    }
+                    Title10();
                     runTitle10 = true;
                 }
 
@@ -99,10 +98,7 @@ public final class Curfew extends JavaPlugin implements Listener {
                 }
 
                 if (GetTime() == config.getInt("starttime") - 5 && !runTitle5) {
-                    for (Player target : getServer().getOnlinePlayers()) {
-                        target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 5 minutes", 3, 100, 3);
-                        continue;
-                    }
+                    Title5();
                     runTitle5 = true;
                 }
 
@@ -113,10 +109,7 @@ public final class Curfew extends JavaPlugin implements Listener {
 
                 if (barexists) {
                     Integer timeLeft = config.getInt("starttime") - GetTime();
-                    for (Player target : getServer().getOnlinePlayers()){
-                        if (!bar.getPlayers().contains(target)){bar.addPlayer(target);}
-                        continue;
-                    }
+                    AddToBar();
                     if (timeLeft > 0) {
                         bar.setProgress(timeLeft.doubleValue() / 10D);
                     } else if (timeLeft <= 0) {
@@ -130,6 +123,27 @@ public final class Curfew extends JavaPlugin implements Listener {
 
             }
         }, 0L, 20L);
+    }
+
+    void AddToBar() {
+        for (Player target : getServer().getOnlinePlayers()){
+            if (!bar.getPlayers().contains(target)){bar.addPlayer(target);}
+            continue;
+        }
+    }
+
+    void Title5() {
+        for (Player target : getServer().getOnlinePlayers()) {
+            target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 5 minutes", 3, 100, 3);
+            continue;
+        }
+    }
+
+    void Title10(){
+        for (Player target : getServer().getOnlinePlayers()) {
+            target.sendTitle(ChatColor.RED + "SERVER CLOSING", ChatColor.GREEN + "The server will close in 10 minutes", 3, 100, 3);
+            continue;
+        }
     }
 
 
