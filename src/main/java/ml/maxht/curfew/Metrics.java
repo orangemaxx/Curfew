@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package hewin.max.curfew;
+package ml.maxht.curfew;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

@@ -1,4 +1,4 @@
 name: Curfew
 version: '${project.version}'
-main: hewin.max.curfew.Curfew
+main: ml.maxht.curfew.Curfew
 api-version: '1.20'
